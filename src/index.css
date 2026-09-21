@@ -1,0 +1,103 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --background: 220 20% 97%;
+    --foreground: 220 25% 10%;
+
+    --primary: 24 95% 53%;
+    --primary-foreground: 0 0% 100%;
+
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 220 15% 90%;
+    --ring: 24 95% 53%;
+
+    /* Sidebar Colors */
+    --sidebar-background: 0 0% 100%;
+    --sidebar-foreground: 220 15% 40%;
+    --sidebar-border: 220 15% 92%;
+
+    --sidebar-hover: 24 40% 96%;
+    --sidebar-group-icon: 24 80% 55%;
+    --sidebar-muted: 220 10% 55%;
+
+    --sidebar-active-bg: 24 95% 94%;
+    --sidebar-active-text: 24 80% 40%;
+    --sidebar-active-border: 24 95% 53%;
+  }
+
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  html,
+  body,
+  #root {
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+  }
+
+  body {
+    @apply bg-[hsl(var(--background))] text-[hsl(var(--foreground))];
+  }
+}
+
+/* -----------------------------
+   Tailwind Utility Mapping
+--------------------------------*/
+
+.bg-sidebar {
+  background-color: hsl(var(--sidebar-background));
+}
+
+.text-sidebar-foreground {
+  color: hsl(var(--sidebar-foreground));
+}
+
+.border-sidebar-border {
+  border-color: hsl(var(--sidebar-border));
+}
+
+.bg-sidebar-hover {
+  background-color: hsl(var(--sidebar-hover));
+}
+
+.text-sidebar-group-icon {
+  color: hsl(var(--sidebar-group-icon));
+}
+
+.text-sidebar-muted {
+  color: hsl(var(--sidebar-muted));
+}
+
+.bg-sidebar-active-bg {
+  background-color: hsl(var(--sidebar-active-bg));
+}
+
+.text-sidebar-active-text {
+  color: hsl(var(--sidebar-active-text));
+}
+
+.border-sidebar-active-border {
+  border-color: hsl(var(--sidebar-active-border));
+}
+
+/* -----------------------------
+   Your Existing Classes
+--------------------------------*/
+
+.input {
+  @apply w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500;
+}
+
+.error-text {
+  @apply text-xs text-red-500 mt-1;
+}
+
