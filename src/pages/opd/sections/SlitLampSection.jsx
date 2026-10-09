@@ -171,14 +171,14 @@ const SlitLampSection = ({ data, onChange }) => {
                     </p>
                 )}
 
-                {merged.fundus.status === "notNormal" && (
+                {/* {merged.fundus.status === "notNormal" && ( */}
                     <textarea
                         value={merged.fundus.remarks}
                         onChange={(e) => setFundus({ remarks: e.target.value })}
                         placeholder="Remarks on fundus findings..."
                         className={textareaCls}
                     />
-                )}
+                {/* )} */}
             </div>
 
 

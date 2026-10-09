@@ -20,11 +20,11 @@ import SendPrescriptionModal from "./modal/Sendprescriptionmodal";
 // Letterhead shown at the top of the printed report. Hardcoded for now — move this
 // into store Settings if it needs to differ per store or be editable by the client.
 const CLINIC_DETAILS = {
-    doctorName: "Nikit Kundra",
+    doctorName: "Beri Optical",
     title: "Optometrist & Eye Specialist",
-    clinicName: "Eye Luminus Clinic",
-    addressLines: ["Brij Nagar, Jalandhar, Punjab, India"],
-    phone: "+91-95306-58756",
+    clinicName: "Beri Optical and Eyecare",
+    addressLines: ["4a, Malhar Road, Sarabha Nagar, Ludhiana 141001"],
+    phone: "+91 8847491061",
 };
 import { toast } from "react-toastify";
 import { useDispatch, useSelector } from "react-redux";

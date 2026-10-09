@@ -10,6 +10,7 @@ const PERIODS = [
     { value: "1", label: "After 1 Month" },
     { value: "3", label: "After 3 Months" },
     { value: "6", label: "After 6 Months" },
+    { value: "12", label: "After 1 Year" },
     { value: "CUSTOM", label: "Custom Date" },
 ];
 
