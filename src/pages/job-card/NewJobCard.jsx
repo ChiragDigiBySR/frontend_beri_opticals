@@ -211,10 +211,16 @@ export default function NewJobCard() {
 
   // select customer by suggestion
   const handleSelectCustomer = async (customer) => {
+
+    const isPatient = customer.source === "patient";
+
     setCustomerData((prev) => ({
       ...prev,
-      _id: customer._id,
-      custNumber: customer.custNumber,
+      // _id: customer._id,
+      // custNumber: customer.custNumber,
+      _id: isPatient ? undefined : customer._id, // Patient _id must not leak in as customer _id
+      custNumber: isPatient ? "" : customer.custNumber,
+      patNumber: isPatient ? customer.patNumber : "",
       name: customer.name || "",
       mobile: String(customer.mobile || ""),
       email: customer.email || "",
@@ -234,7 +240,13 @@ export default function NewJobCard() {
     setMembershipLookupQuery("");
     setMembershipLookupError("");
 
-    if (customer.custNumber) {
+    // if (customer.custNumber) {
+    //   await fetchLatestPrescription(customer.custNumber);
+    // }
+
+    if (isPatient) {
+      await fetchLatestPrescription(customer.patNumber, "patient");
+    } else if (customer.custNumber) {
       await fetchLatestPrescription(customer.custNumber);
     }
 
@@ -320,10 +332,16 @@ export default function NewJobCard() {
     pstatus: "In-process",
   };
 
-  const fetchLatestPrescription = async (custNumber) => {
+  // const fetchLatestPrescription = async (custNumber) => {
+  const fetchLatestPrescription = async (id, source = "customer") => {
     try {
       setFetchingRx(true);
-      const res = await api.get(`/jc/${custNumber}/latest-prescription`);
+      // const res = await api.get(`/jc/${custNumber}/latest-prescription`);
+      const url = source === "patient"
+        ? `/jc/patient/${id}/latest-prescription`
+        : `/jc/${id}/latest-prescription`;
+      const res = await api.get(url);
+
       if (res.data.success && res.data.data) {
         const { contactLens, eyewear, transpose, restprescription } =
           res.data.data;
@@ -1285,7 +1303,7 @@ export default function NewJobCard() {
   /* -------------------- UI -------------------- */
   return (
     <div className="p-4 mb-24 bg-white rounded-xl shadow space-y-8"
-    onKeyDown={handleEnterAsTab}
+      onKeyDown={handleEnterAsTab}
     >
       {fetchingRx && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm">

@@ -269,185 +269,255 @@ const OPDReportView = ({ report = {}, onBack, embedded = false }) => {
 
                 {/* Patient */}
                 <div className={embedded ? "grid grid-cols-1 sm:grid-cols-2 sm:[grid-auto-flow:dense] gap-x-8 print:grid-cols-1" : ""}>
-                <SectionBlock title="Patient Details">
-                    <div className="flex items-center gap-2 mb-1.5">
-                        <FiUser size={13} className="text-gray-400" />
-                        <span className="text-sm font-bold text-gray-800">{patient.name || "—"}</span>
-                        {patient.gender && <span className="text-xs text-gray-400">({patient.gender})</span>}
-                    </div>
-                    <Row label="Mobile" value={patient.mobile ? `${patient.countryCode || ""} ${patient.mobile}` : ""} />
-                    <Row label="Email" value={patient.email} />
-                    <Row label="Date of Birth" value={patient.dob ? new Date(patient.dob).toLocaleDateString() : ""} />
-                    <Row label="Relation" value={patient.relationType && patient.relationType !== "Self" ? `${patient.relationType} ${patient.relationName || ""}` : ""} />
-                    
-                </SectionBlock>
+                    <SectionBlock title="Patient Details">
+                        <div className="flex items-center gap-2 mb-1.5">
+                            <FiUser size={13} className="text-gray-400" />
+                            <span className="text-sm font-bold text-gray-800">{patient.name || "—"}</span>
+                            {patient.gender && <span className="text-xs text-gray-400">({patient.gender})</span>}
+                        </div>
+                        <Row label="Mobile" value={patient.mobile ? `${patient.countryCode || ""} ${patient.mobile}` : ""} />
+                        <Row label="Email" value={patient.email} />
+                        <Row label="Date of Birth" value={patient.dob ? new Date(patient.dob).toLocaleDateString() : ""} />
+                        <Row label="Relation" value={patient.relationType && patient.relationType !== "Self" ? `${patient.relationType} ${patient.relationName || ""}` : ""} />
 
-                {/* History */}
-                {(hasText(history.chiefComplaint) || hasText(history.duration)) && (
-                    <SectionBlock title="History">
-                        <Row label="Chief Complaint" value={history.chiefComplaint} />
-                        <Row label="Duration" value={history.duration} />
                     </SectionBlock>
-                )}
 
-                {/* Ocular History */}
-                {Object.keys(ocular.items || {}).some((id) => ocular.items[id]?.answer) && (
-                    <SectionBlock title="Ocular History">
-                        {Object.entries(ocular.items).filter(([, v]) => v?.answer).map(([id, v]) => (
-                            <Row key={id} label={labelFor(OCULAR_HISTORY_ITEMS, id)} value={v.answer === "yes" ? (v.detail || "Yes") : "No"} />
-                        ))}
-                    </SectionBlock>
-                )}
-
-                {/* Systemic History */}
-                {Object.keys(systemic.items || {}).some((id) => systemic.items[id]?.answer) && (
-                    <SectionBlock title="Systemic History">
-                        {Object.entries(systemic.items).filter(([, v]) => v?.answer).map(([id, v]) => (
-                            <Row
-                                key={id}
-                                label={labelFor(SYSTEMIC_HISTORY_ITEMS, id)}
-                                value={v.answer === "yes" ? [v.detail, v.duration].filter(Boolean).join(" — ") || "Yes" : "No"}
-                            />
-                        ))}
-                    </SectionBlock>
-                )}
-
-                {/* Allergy */}
-                {allergy.answer && (
-                    <SectionBlock title="Allergy">
-                        <Row label="Allergy" value={allergy.answer === "yes" ? (allergy.detail || "Yes") : "Not aware of any"} />
-                    </SectionBlock>
-                )}
-
-                {/* Birth & Development — only printable fields */}
-                {["birthWeight", "termStatus", "modeOfDelivery", "firstCry", "pregnancyComplications",
-                    "birthComplications", "nicuAdmission", "vaccinationStatus", "developmentalMilestones", "notes"]
-                    .some((k) => hasText(birth[k]?.value)) && (
-                    <SectionBlock title="Birth & Development">
-                        {printableRow(birth.birthWeight, "Birth Weight")}
-                        {printableRow(birth.termStatus, "Term Status")}
-                        {printableRow(birth.modeOfDelivery, "Mode of Delivery")}
-                        {printableRow(birth.firstCry, "First Cry")}
-                        {printableRow(birth.pregnancyComplications, "Pregnancy Complications")}
-                        {printableRow(birth.birthComplications, "Birth Complications")}
-                        {printableRow(birth.nicuAdmission, "NICU Admission")}
-                        {printableRow(birth.vaccinationStatus, "Vaccination Status")}
-                        {printableRow(birth.developmentalMilestones, "Developmental Milestones")}
-                        {printableRow(birth.notes, "Notes")}
-                    </SectionBlock>
-                )}
-
-                {/* Vision */}
-                <SectionBlock title="Vision" className={wideCls}>
-                    <AcuityTable
-                        rows={[
-                            { label: "Unaided Distance", ...vision.unaided?.distance },
-                            { label: "Unaided Near", ...vision.unaided?.near },
-                            { label: "Vision with Pinhole", ...vision.unaided?.pinhole },
-                            { label: "Color Vision", ...vision.unaided?.colorVision },
-                            { label: "Contrast Sensitivity", ...vision.unaided?.contrastSensitivity },
-                        ]}
-                    />
-                    <Row label="Contrast Sensitivity Note" value={vision.unaided?.contrastSensitivityNote} />
-                    {vision.presentGlasses?.wearsGlasses === "yes" && (
-                        <EyeTable label="Present Glasses" od={vision.presentGlasses.od} os={vision.presentGlasses.os} add={vision.presentGlasses.add} columns={["SPH", "CYL", "AXIS", "VISION"]} />
+                    {/* History */}
+                    {(hasText(history.chiefComplaint) || hasText(history.duration)) && (
+                        <SectionBlock title="History">
+                            <Row label="Chief Complaint" value={history.chiefComplaint} />
+                            <Row label="Duration" value={history.duration} />
+                        </SectionBlock>
                     )}
-                </SectionBlock>
 
-                {/* Refraction — all tables shown; badge marks any excluded from print */}
-                {REFRACTION_TABLES.some((t) => refraction[t.id]) && (
-                    <SectionBlock title="Refraction" className={wideCls}>
-                        {REFRACTION_TABLES.filter((t) => refraction[t.id]).map((t) => (
-                            <EyeTable
-                                key={t.id}
-                                label={t.label}
-                                hidden={!refraction[t.id]?.print}
-                                od={refraction[t.id]?.od}
-                                os={refraction[t.id]?.os}
-                                add={t.id === "finalPrescription" ? refraction[t.id]?.add : undefined}
-                                columns={t.id === "autoKeratometry" ? ["SPH", "CYL", "AXIS", "BC"] : ["SPH", "CYL", "AXIS"]}
-                            />
-                        ))}
-                    </SectionBlock>
-                )}
-
-                {/* Prescribed Glasses */}
-                {(hasText(pgp.od?.sph) || hasText(pgp.os?.sph) || hasText(pgp.add)) && (
-                    <SectionBlock title="Prescribed Glasses">
-                        <EyeTable label="Prescription" od={pgp.od} os={pgp.os} add={pgp.add} columns={["SPH", "CYL", "AXIS"]} />
-                    </SectionBlock>
-                )}
-
-                {/* Contact Lens */}
-                {cl.usesContactLens === "yes" && (
-                    <SectionBlock title="Contact Lens" hidden={!cl.print}>
-                        <Row label="Lens Type" value={cl.lensType} />
-                        <Row label="Brand" value={cl.brand} />
-                        <Row label="Base Curve" value={cl.baseCurve} />
-                        <Row label="Diameter" value={cl.diameter} />
-                        <Row label="Power" value={cl.power} />
-                        <Row label="Wearing Schedule" value={cl.wearingSchedule} />
-                        <Row label="Solution Used" value={cl.solutionUsed} />
-                        <Row label="Notes" value={cl.notes} />
-                    </SectionBlock>
-                )}
-
-                {/* Slit Lamp */}
-                {(slit.od || slit.os || slit.fundus?.status) && (
-                    <SectionBlock title="Slit Lamp Examination" className={wideCls} hidden={!slit.print}>
-                        {["lidsLashes", "conjunctiva", "cornea", "anteriorChamber", "iris", "lens", "vitreous", "pupil", "tearFilm"]
-                            .filter((k) => hasText(slit.od?.[k]) || hasText(slit.os?.[k]))
-                            .map((k) => (
-                                <div key={k} className="flex gap-2 py-0.5 text-sm">
-                                    <span className="text-gray-400 shrink-0 min-w-[140px] capitalize">{k.replace(/([A-Z])/g, " $1")}</span>
-                                    <span className="text-gray-800">OD: {slit.od?.[k] || "—"} &nbsp; OS: {slit.os?.[k] || "—"}</span>
-                                </div>
+                    {/* Ocular History */}
+                    {Object.keys(ocular.items || {}).some((id) => ocular.items[id]?.answer) && (
+                        <SectionBlock title="Ocular History">
+                            {Object.entries(ocular.items).filter(([, v]) => v?.answer).map(([id, v]) => (
+                                <Row key={id} label={labelFor(OCULAR_HISTORY_ITEMS, id)} value={v.answer === "yes" ? (v.detail || "Yes") : "No"} />
                             ))}
-                        {slit.fundus?.status === "normal" && <Row label="Fundus" value="Patient seen Undilated" />}
-                        {slit.fundus?.status === "notNormal" && <Row label="Fundus" value={slit.fundus.remarks} />}
-                    </SectionBlock>
-                )}
+                        </SectionBlock>
+                    )}
 
-                {/* Binocular Vision — all tests shown; badge marks any excluded from print */}
-                {(BV_TESTS.some((t) => bv.tests?.[t.id]) || bv.notes) && (
-                    <SectionBlock title="Binocular Vision" className={wideCls}>
-                        {BV_TESTS.filter((t) => bv.tests?.[t.id]).map((t) => (
-                            <Row
-                                key={t.id}
-                                label={t.label}
-                                hidden={!bv.tests[t.id].print}
-                                value={[bv.tests[t.id].report, bv.tests[t.id].notes].filter(hasText).join(" — ")}
-                            />
-                        ))}
-                        {printableRow(bv.notes, "Notes")}
-                    </SectionBlock>
-                )}
+                    {/* Systemic History */}
+                    {Object.keys(systemic.items || {}).some((id) => systemic.items[id]?.answer) && (
+                        <SectionBlock title="Systemic History">
+                            {Object.entries(systemic.items).filter(([, v]) => v?.answer).map(([id, v]) => (
+                                <Row
+                                    key={id}
+                                    label={labelFor(SYSTEMIC_HISTORY_ITEMS, id)}
+                                    value={v.answer === "yes" ? [v.detail, v.duration].filter(Boolean).join(" — ") || "Yes" : "No"}
+                                />
+                            ))}
+                        </SectionBlock>
+                    )}
 
-                {/* Vision Therapy Plan */}
-                {hasText(therapy.plan) && (
-                    <SectionBlock title="Vision Therapy Plan" hidden={!therapy.print}>
-                        <p className="text-sm text-gray-800 whitespace-pre-wrap">{therapy.plan}</p>
-                    </SectionBlock>
-                )}
+                    {/* Allergy */}
+                    {allergy.answer && (
+                        <SectionBlock title="Allergy">
+                            <Row label="Allergy" value={allergy.answer === "yes" ? (allergy.detail || "Yes") : "Not aware of any"} />
+                        </SectionBlock>
+                    )}
 
-                {/* Diagnosis */}
-                {checkedDiagnoses.length > 0 && (
-                    <SectionBlock title="Diagnosis">
-                        {checkedDiagnoses.map((d) => (
-                            <Row key={d.id} label={d.label} value={diagnosis.selected[d.id]?.detail || "✓"} />
-                        ))}
-                    </SectionBlock>
-                )}
+                    {/* Birth & Development — only printable fields */}
+                    {["birthWeight", "termStatus", "modeOfDelivery", "firstCry", "pregnancyComplications",
+                        "birthComplications", "nicuAdmission", "vaccinationStatus", "developmentalMilestones", "notes"]
+                        .some((k) => hasText(birth[k]?.value)) && (
+                            <SectionBlock title="Birth & Development">
+                                {printableRow(birth.birthWeight, "Birth Weight")}
+                                {printableRow(birth.termStatus, "Term Status")}
+                                {printableRow(birth.modeOfDelivery, "Mode of Delivery")}
+                                {printableRow(birth.firstCry, "First Cry")}
+                                {printableRow(birth.pregnancyComplications, "Pregnancy Complications")}
+                                {printableRow(birth.birthComplications, "Birth Complications")}
+                                {printableRow(birth.nicuAdmission, "NICU Admission")}
+                                {printableRow(birth.vaccinationStatus, "Vaccination Status")}
+                                {printableRow(birth.developmentalMilestones, "Developmental Milestones")}
+                                {printableRow(birth.notes, "Notes")}
+                            </SectionBlock>
+                        )}
 
-                {/* Advice */}
-                {(checkedAdvice.length > 0 || hasText(advice.freeText)) && (
-                    <SectionBlock title="Advice" className={wideCls}>
-                        {checkedAdvice.map((t) => (
-                            <Row key={t.id} label={t.label} value={t.hasDays && advice.followUpDays ? `After ${advice.followUpDays} days` : "✓"} />
-                        ))}
-                        {hasText(advice.freeText) && <p className="text-sm text-gray-800 whitespace-pre-wrap mt-1">{advice.freeText}</p>}
+                    {/* Vision */}
+                    <SectionBlock title="Vision" className={wideCls}>
+                        <AcuityTable
+                            rows={[
+                                { label: "Unaided Distance", ...vision.unaided?.distance },
+                                { label: "Unaided Near", ...vision.unaided?.near },
+                                { label: "Vision with Pinhole", ...vision.unaided?.pinhole },
+                                { label: "Color Vision", ...vision.unaided?.colorVision },
+                                { label: "Contrast Sensitivity", ...vision.unaided?.contrastSensitivity },
+                            ]}
+                        />
+                        <Row label="Contrast Sensitivity Note" value={vision.unaided?.contrastSensitivityNote} />
+                        {vision.presentGlasses?.wearsGlasses === "yes" && (
+                            <EyeTable label="Present Glasses" od={vision.presentGlasses.od} os={vision.presentGlasses.os} add={vision.presentGlasses.add} columns={["SPH", "CYL", "AXIS", "VISION"]} />
+                        )}
                     </SectionBlock>
-                )}
+
+                    {/* Refraction — all tables shown; badge marks any excluded from print */}
+                    {REFRACTION_TABLES.some((t) => refraction[t.id]) && (
+                        <SectionBlock title="Refraction" className={wideCls}>
+                            {REFRACTION_TABLES.filter((t) => refraction[t.id]).map((t) => (
+                                <EyeTable
+                                    key={t.id}
+                                    label={t.label}
+                                    hidden={!refraction[t.id]?.print}
+                                    od={refraction[t.id]?.od}
+                                    os={refraction[t.id]?.os}
+                                    add={t.id === "finalPrescription" ? refraction[t.id]?.add : undefined}
+                                    columns={t.id === "autoKeratometry" ? ["SPH", "CYL", "AXIS", "BC"] : ["SPH", "CYL", "AXIS"]}
+                                />
+                            ))}
+                        </SectionBlock>
+                    )}
+
+                    {/* Prescribed Glasses */}
+                    {/* {(hasText(pgp.od?.sph) || hasText(pgp.os?.sph) || hasText(pgp.add)) && (
+                        <SectionBlock title="Prescribed Glasses">
+                            <EyeTable label="Prescription" od={pgp.od} os={pgp.os} add={pgp.add} columns={["SPH", "CYL", "AXIS"]} />
+                        </SectionBlock>
+                    )} */}
+
+
+                    {/* Contact Lens */}
+                    {cl.usesContactLens === "yes" && (
+                        <SectionBlock title="Contact Lens" hidden={!cl.print}>
+                            <Row label="Lens Type" value={cl.lensType} />
+                            <Row label="Brand" value={cl.brand} />
+                            <Row label="Base Curve" value={cl.baseCurve} />
+                            <Row label="Diameter" value={cl.diameter} />
+
+                            {/* Contact Lens Power */}
+                            {(cl.power?.od ||
+                                cl.power?.os ||
+                                hasText(cl.power?.add)) && (
+                                    <div className="mt-3 mb-3">
+                                        <div className="text-xs font-semibold text-gray-700 mb-2">
+                                            Contact Lens Power
+                                        </div>
+
+                                        <div className="overflow-x-auto">
+                                            <table className="w-full min-w-[360px] border-collapse text-sm">
+                                                <thead>
+                                                    <tr className="bg-gray-50">
+                                                        <th className="border border-gray-200 px-3 py-2 text-left text-[10px] font-semibold text-gray-500">
+                                                            Eye
+                                                        </th>
+                                                        {["SPH", "CYL", "AXIS", "VISION"].map(
+                                                            (field) => (
+                                                                <th
+                                                                    key={field}
+                                                                    className="border border-gray-200 px-3 py-2 text-center text-[10px] font-semibold text-gray-500"
+                                                                >
+                                                                    {field}
+                                                                </th>
+                                                            )
+                                                        )}
+                                                    </tr>
+                                                </thead>
+
+                                                <tbody>
+                                                    {[
+                                                        { key: "od", label: "OD" },
+                                                        { key: "os", label: "OS" },
+                                                    ].map(({ key, label }) => {
+                                                        const eye = cl.power?.[key] || {};
+
+                                                        return (
+                                                            <tr key={key}>
+                                                                <td className="border border-gray-200 px-3 py-2 font-semibold text-gray-700">
+                                                                    {label}
+                                                                </td>
+
+                                                                {["sph", "cyl", "axis", "vision"].map(
+                                                                    (field) => (
+                                                                        <td
+                                                                            key={field}
+                                                                            className="border border-gray-200 px-3 py-2 text-center text-gray-700"
+                                                                        >
+                                                                            {hasText(eye[field])
+                                                                                ? eye[field]
+                                                                                : "—"}
+                                                                        </td>
+                                                                    )
+                                                                )}
+                                                            </tr>
+                                                        );
+                                                    })}
+                                                </tbody>
+                                            </table>
+                                        </div>
+
+                                        {hasText(cl.power?.add) && (
+                                            <div className="mt-2">
+                                                <Row label="ADD" value={cl.power.add} />
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
+
+                            <Row label="Wearing Schedule" value={cl.wearingSchedule} />
+                            <Row label="Solution Used" value={cl.solutionUsed} />
+                            <Row label="Notes" value={cl.notes} />
+                        </SectionBlock>
+                    )}
+
+                    {/* Slit Lamp */}
+                    {(slit.od || slit.os || slit.fundus?.status) && (
+                        <SectionBlock title="Slit Lamp Examination" className={wideCls} hidden={!slit.print}>
+                            {["lidsLashes", "conjunctiva", "cornea", "anteriorChamber", "iris", "lens", "vitreous", "pupil", "tearFilm"]
+                                .filter((k) => hasText(slit.od?.[k]) || hasText(slit.os?.[k]))
+                                .map((k) => (
+                                    <div key={k} className="flex gap-2 py-0.5 text-sm">
+                                        <span className="text-gray-400 shrink-0 min-w-[140px] capitalize">{k.replace(/([A-Z])/g, " $1")}</span>
+                                        <span className="text-gray-800">OD: {slit.od?.[k] || "—"} &nbsp; OS: {slit.os?.[k] || "—"}</span>
+                                    </div>
+                                ))}
+                            {slit.fundus?.status === "normal" && <Row label="Fundus" value="Patient seen Undilated" />}
+                            {slit.fundus?.status === "notNormal" && <Row label="Fundus" value={slit.fundus.remarks} />}
+                        </SectionBlock>
+                    )}
+
+                    {/* Binocular Vision — all tests shown; badge marks any excluded from print */}
+                    {(BV_TESTS.some((t) => bv.tests?.[t.id]) || bv.notes) && (
+                        <SectionBlock title="Binocular Vision" className={wideCls}>
+                            {BV_TESTS.filter((t) => bv.tests?.[t.id]).map((t) => (
+                                <Row
+                                    key={t.id}
+                                    label={t.label}
+                                    hidden={!bv.tests[t.id].print}
+                                    value={[bv.tests[t.id].report, bv.tests[t.id].notes].filter(hasText).join(" — ")}
+                                />
+                            ))}
+                            {printableRow(bv.notes, "Notes")}
+                        </SectionBlock>
+                    )}
+
+                    {/* Vision Therapy Plan */}
+                    {hasText(therapy.plan) && (
+                        <SectionBlock title="Vision Therapy Plan" hidden={!therapy.print}>
+                            <p className="text-sm text-gray-800 whitespace-pre-wrap">{therapy.plan}</p>
+                        </SectionBlock>
+                    )}
+
+                    {/* Diagnosis */}
+                    {checkedDiagnoses.length > 0 && (
+                        <SectionBlock title="Diagnosis">
+                            {checkedDiagnoses.map((d) => (
+                                <Row key={d.id} label={d.label} value={diagnosis.selected[d.id]?.detail || "✓"} />
+                            ))}
+                        </SectionBlock>
+                    )}
+
+                    {/* Advice */}
+                    {(checkedAdvice.length > 0 || hasText(advice.freeText)) && (
+                        <SectionBlock title="Advice" className={wideCls}>
+                            {checkedAdvice.map((t) => (
+                                <Row key={t.id} label={t.label} value={t.hasDays && advice.followUpDays ? `After ${advice.followUpDays} days` : "✓"} />
+                            ))}
+                            {hasText(advice.freeText) && <p className="text-sm text-gray-800 whitespace-pre-wrap mt-1">{advice.freeText}</p>}
+                        </SectionBlock>
+                    )}
                 </div>
             </div>
         </div>

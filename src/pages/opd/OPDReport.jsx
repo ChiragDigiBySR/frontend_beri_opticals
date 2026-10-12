@@ -10,7 +10,7 @@ import AllergySection from "./sections/AllergySection";
 import BirthDevelopmentSection from "./sections/BirthDevelopmentSection";
 import VisionSection from "./sections/VisionSection";
 import RefractionSection from "./sections/RefractionSection";
-import PrescribedGlassesSection from "./sections/PrescribedGlassesSection";
+// import PrescribedGlassesSection from "./sections/PrescribedGlassesSection";
 import ContactLensSection from "./sections/ContactLensSection";
 import SlitLampSection from "./sections/SlitLampSection";
 import BinocularVisionSection from "./sections/BinocularVisionSection";
@@ -45,7 +45,7 @@ const SECTIONS = [
     { id: "birth", label: "Birth & Development", icon: FiUsers, description: "Birth, delivery, milestones" },
     { id: "vision", label: "Vision", icon: FiEye, description: "Unaided acuity & present glasses" },
     { id: "refraction", label: "Refraction", icon: FiTarget, description: "Auto, retinoscopy, subjective, final" },
-    { id: "prescribedGlasses", label: "Prescribed Glasses", icon: FiSliders, description: "Glasses dispensed to patient" },
+    // { id: "prescribedGlasses", label: "Prescribed Glasses", icon: FiSliders, description: "Glasses dispensed to patient" },
     { id: "contactLens", label: "Contact Lens", icon: FiCircle, description: "Lens type, fit, wear schedule" },
     { id: "slitLamp", label: "Slit Lamp Exam", icon: FiLayers, description: "Anterior segment findings" },
     { id: "binocular", label: "Binocular Vision", icon: FiZap, description: "Phorias, vergence, accommodation" },
@@ -60,7 +60,9 @@ const SECTIONS = [
 // Sidebar grouping — purely visual, doesn't change SECTIONS/SECTION_COMPONENTS below
 const GROUPS = [
     { title: "History", ids: ["history", "ocular", "systemic", "allergy", "birth"] },
-    { title: "Vision & Refraction", ids: ["vision", "refraction", "prescribedGlasses", "contactLens"] },
+    { title: "Vision & Refraction", ids: ["vision", "refraction", 
+        // "prescribedGlasses", 
+        "contactLens"] },
     { title: "Clinical Exam", ids: ["slitLamp", "binocular"] },
     { title: "Plan & Outcome", ids: ["therapyPlan", "diagnosis", "advice", "followUp"] },
 ];
@@ -73,7 +75,7 @@ const SECTION_COMPONENTS = {
     birth: BirthDevelopmentSection,
     vision: VisionSection,
     refraction: RefractionSection,
-    prescribedGlasses: PrescribedGlassesSection,
+    // prescribedGlasses: PrescribedGlassesSection,
     contactLens: ContactLensSection,
     slitLamp: SlitLampSection,
     binocular: BinocularVisionSection,
@@ -323,9 +325,9 @@ const OPDReport = () => {
                                 <ActiveComponent
                                     data={formData[activeId] || {}}
                                     onChange={(data) => updateSection(activeId, data)}
-                                    {...(activeId === "prescribedGlasses"
-                                        ? { finalRefraction: formData.refraction?.finalPrescription }
-                                        : {})}
+                                    // {...(activeId === "prescribedGlasses"
+                                    //     ? { finalRefraction: formData.refraction?.finalPrescription }
+                                    //     : {})}
                                     {...(OPD_OPTIONS_SECTION_KEY[activeId]
                                         ? {
                                             customOptions: opdOptions[OPD_OPTIONS_SECTION_KEY[activeId]] || [],

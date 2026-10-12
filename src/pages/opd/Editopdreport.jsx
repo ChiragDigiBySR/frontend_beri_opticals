@@ -12,7 +12,7 @@ import AllergySection from "./sections/AllergySection";
 import BirthDevelopmentSection from "./sections/BirthDevelopmentSection";
 import VisionSection from "./sections/VisionSection";
 import RefractionSection from "./sections/RefractionSection";
-import PrescribedGlassesSection from "./sections/PrescribedGlassesSection";
+// import PrescribedGlassesSection from "./sections/PrescribedGlassesSection";
 import ContactLensSection from "./sections/ContactLensSection";
 import SlitLampSection from "./sections/SlitLampSection";
 import BinocularVisionSection from "./sections/BinocularVisionSection";
@@ -81,12 +81,12 @@ const SECTIONS = [
         icon: FiTarget,
         description: "Auto, retinoscopy, subjective, final",
     },
-    {
-        id: "prescribedGlasses",
-        label: "Prescribed Glasses",
-        icon: FiSliders,
-        description: "Glasses dispensed to patient",
-    },
+    // {
+    //     id: "prescribedGlasses",
+    //     label: "Prescribed Glasses",
+    //     icon: FiSliders,
+    //     description: "Glasses dispensed to patient",
+    // },
     {
         id: "contactLens",
         label: "Contact Lens",
@@ -141,7 +141,7 @@ const GROUPS = [
         ids: [
             "vision",
             "refraction",
-            "prescribedGlasses",
+            // "prescribedGlasses",
             "contactLens",
         ],
     },
@@ -163,7 +163,7 @@ const SECTION_COMPONENTS = {
     birth: BirthDevelopmentSection,
     vision: VisionSection,
     refraction: RefractionSection,
-    prescribedGlasses: PrescribedGlassesSection,
+    // prescribedGlasses: PrescribedGlassesSection,
     contactLens: ContactLensSection,
     slitLamp: SlitLampSection,
     binocular: BinocularVisionSection,
@@ -184,7 +184,7 @@ const SCHEMA_FIELD_MAP = {
     birth: "birthDevelopment",
     vision: "vision",
     refraction: "refraction",
-    prescribedGlasses: "prescribedGlasses",
+    // prescribedGlasses: "prescribedGlasses",
     contactLens: "contactLens",
     slitLamp: "slitLamp",
     binocular: "binocularVision",
@@ -797,15 +797,15 @@ const EditOPDReport = ({ onBack, onSaved }) => {
                                         )
                                     }
 
-                                    {...(activeId ===
-                                        "prescribedGlasses"
-                                        ? {
-                                            finalRefraction:
-                                                formData
-                                                    .refraction
-                                                    ?.finalPrescription,
-                                        }
-                                        : {})}
+                                    // {...(activeId ===
+                                    //     "prescribedGlasses"
+                                    //     ? {
+                                    //         finalRefraction:
+                                    //             formData
+                                    //                 .refraction
+                                    //                 ?.finalPrescription,
+                                    //     }
+                                    //     : {})}
 
                                     {...(OPD_OPTIONS_SECTION_KEY[
                                         activeId
